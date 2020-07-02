@@ -47,13 +47,12 @@ a) Generating a Base64 encoded header with a HS256 HMAC
 b) Constructuring a Base64 encoded payload using the following details:
 
 ```
-var payload = new
-{
-iss: "canopy.rent",
-scope: "request.write_only document.read_only",
-aud: `referencing-requests/client/${clientId}/token`,
-exp: expires,
-iat: now
+var payload = new {
+    iss: "canopy.rent",
+    scope: "request.write_only document.read_only",
+    aud: `referencing-requests/client/${clientId}/token`,
+    exp: expires,
+    iat: now
 };
 ```
 
