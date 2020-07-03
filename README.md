@@ -26,7 +26,8 @@ https://backend-stag-qwertyuiop.canopy.rent
 ```
 
 Production
-```https://backend-prod.canopy.rent
+```
+https://backend-prod.canopy.rent
 ```
 
 ## Requesting Your Credentials
