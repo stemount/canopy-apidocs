@@ -1,3 +1,5 @@
+![Logo](/canopylogo.png "Logo")
+
 # Canopy API Docs
 
 ## Introduction
