@@ -32,58 +32,66 @@ https://backend-prod.canopy.rent
 
 ## Requesting Your Credentials
 
-TODO: Zhenya/Anton: How do I request the clientId and secretKey
+Credentials are provided on request by Canopy to yourselves.  Please speak to your account manager here.
 
-## Authentication and Authorisation
+## Requesting an API Token
 
-You need to generate a jwtKey that you have been provided by Canopy based on the:
+You need to request an API token to make calls to the Canopy API.
 
-* clientId
-* secretKey 
+In order to do this you need to:
 
-The details here will be specific to the language/ecosystem you are building the integration within.  
-
-We stipulate that a JWT needs to be constructed by:
-
-a) Generating a Base64 encoded header with a HS256 HMAC
-
-b) Constructuring a Base64 encoded payload using the following details:
+1. Generate a payload using the clientId from the credentials you have been sent.  The example here uses Javascript:
 
 ```
-var payload = new {
-    iss: "canopy.rent",
-    scope: "request.write_only document.read_only",
-    aud: `referencing-requests/client/${clientId}/token`,
-    exp: expires,
-    iat: now
-};
+function generatePayload(clientId) {
+  const now = Math.floor(Date.now() / 1000); // sec
+    const expires = now + 60 * 60;
+    var payload = {
+        iss: 'canopy.rent',
+        scope: 'request.write_only document.read_only',
+        aud: `referencing-requests/client/${clientId}/token`,
+        exp: expires,
+        iat: now
+    };
+  return base64url.encode(JSON.stringify(payload))
+}
 ```
 
-c) Hashing the payload with HMAC SHA256 and Base64 encoding the payload
-
-e.g. For .NET an example is provided: https://www.petermorlion.com/generating-a-jwt-in-net-4-5-2/
-
-## Requesting an Authorisation Token
-
-You can request an authorisation token from the following endpoint:
+2. You need to sign this with JWT (e.g. jsonwebtoken in Javascript) using the secretKey in the credentials you were sent
 
 ```
-GET /referencing-requests/client/:clientId/token
+const jwtKey = jwt.sign(generatePayload(config), secretKey);
 ```
 
-In order to do this successfullly you need to include the x-api-key in the header:
-
+The BODY of the request should include the following
 ```
-x-api-key: "" (API key)
-```
-
-and the jwtKey in the body as follows:
-
-```
-jwtKey: ""
+jwtKey: jwtKey
 ```
 
-The response body will contain a token. 
+3. The header of the request should include the apiKey from the credentials you were sent
+
+```
+x-api-key: apiKey
+```
+
+4. Finally make a POST request with the header and body to the following endpoint:
+
+```
+POST /referencing-requests/client/:clientId/token
+```
+
+If the request is successful, the response body will contain the token for future API requests with an expires timestamp:
+
+
+```
+...
+Response: {
+  "success": true,
+  "access_token": "Bearer eyaasd456FFGDFGdfgdfgdfgdfg7sdyfg359tu345gtbsdv784ygtbkjl3g80y35htjl3bhef89y4rjkbergv-KAj-dGh0xEuZftO_Utm6dugKQ",
+  "expires": 1594907203
+}
+...
+```
 
 ## Using the Authorization Token
 
