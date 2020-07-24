@@ -125,7 +125,7 @@ Response:
 Once referencing has been completed by the renter in the Canopy mobile application, an update message will be sent by the Canopy platform to an endpoint to indicate completion.  This will include a field for the URL to download the passport from:
 
 ```
-url: /referencing-requests/client/${clientId}/documents/9e6181ee-333b-4497-b13a-07727363a6b6
+GET /referencing-requests/client/${clientId}/documents/9e6181ee-333b-4497-b13a-07727363a6b6
 ```
 
 TODO: Zhenya/Anton: Can we configure the callback here for a given client?  e.g. Jon Properties Limited
