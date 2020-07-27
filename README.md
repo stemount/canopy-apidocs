@@ -117,6 +117,32 @@ Parameters:
 clientId: your client reference
 ```
 
+Request body:
+
+Currently, we support 2 request body schemas:
+
+1. With `clientReference` by which we get request details in a separate call:
+
+    ```
+    "clientReference": string | (required)
+    "canopyReference": uuid | (optional) this is an identifier of the same user in Canopy database
+    "branchId": uuid | (optional) this is an identifier of the client's branch which requests the user
+    "requestType": enum | (required) RENTER_SCREENING, GUARANTOR_SCREENING
+    "itemType": enum  | (required) INSTANT, FULL
+    ```
+
+2. With all user details at registration and callback URL:
+
+    ```
+    "email": string | (required)
+    "firstName": string | (optional)
+    "middleName": string | (optional)
+    "latName": string | (optional)
+    "callbackUrl": string | (required) URL to which Canopy will send PDF Report
+    "requestType": enum | (required) RENTER_SCREENING, GUARANTOR_SCREENING
+    "itemType": enum | (required) INSTANT, FULL
+    ```
+
 Response:
 
 - If Canopy server successfully registered a new referencing request, the response will be the following:
@@ -146,6 +172,12 @@ Response:
     "status": 400,
     "type" - error type,
     "message" - error message,
+    "errors": [] - an array of error objects, each of them has the following structure:
+      {
+        "type" - error type,
+        "path" - error path,
+        "message" - error message
+      }
   }
   ```
 
