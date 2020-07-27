@@ -109,7 +109,7 @@ This token has an expiryTime of 20 minutes, after which you will receive an auth
 ### Request Referencing
 
 ```
-POST /referencing-requests/client/:clientId/request 
+POST /referencing-requests/client/:clientId/request
 ```
 
 Parameters:
@@ -118,17 +118,44 @@ clientId: your client reference
 ```
 
 Response:
-* TODO
+
+- If Canopy server successfully registered a new referencing request, the response will be the following:
+
+  ```
+  "requestId" - the identifier of the request,
+  "success": true
+  ```
+
+- If the server threw an `authentication` error while handling a new request, then the response will be the following:
+
+  ```
+  "success": false,
+  "requestId" - the identifier of the request,
+  "error": {
+    "status": 401,
+    "type" - error type,
+    "message" - error message
+  }
+  ```
+- If the server threw a `validation` error while handling a new request, then the response will be the following:
+
+  ```
+  "success": false,
+  "requestId" - the identifier of the request,
+  "error": {
+    "status": 400,
+    "type" - error type,
+    "message" - error message,
+  }
+  ```
 
 ### Document Updates
 
 Once referencing has been completed by the renter in the Canopy mobile application, an update message will be sent by the Canopy platform to an endpoint to indicate completion.  This will include a field for the URL to download the passport from:
 
 ```
-GET /referencing-requests/client/${clientId}/documents/9e6181ee-333b-4497-b13a-07727363a6b6
+GET /referencing-requests/client/${clientId}/documents/{documentId}
 ```
-
-TODO: Zhenya/Anton: Can we configure the callback here for a given client?  e.g. Jon Properties Limited
 
 ### Rent Passport Retrieval
 
@@ -144,7 +171,7 @@ clientId: your client reference
 documentId: the ID of the document returned from the document update
 ```
 
-Response: 
+Response:
 
 The PDF will be included in the response body with the filename specified in the header as follows:
 
