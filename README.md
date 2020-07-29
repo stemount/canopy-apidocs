@@ -12,7 +12,7 @@ We follow standard behaviour in terms of URL's, JSON request/response bodies whe
 
 ## Environment Details
 
-Canopy has 3 environments. Each environment has its own URL, which will be used by external clients in order to test functionality and then use
+Canopy has three environments. Each environment has its own URL, which will be used by external clients in order to test functionality and then use
 it on production:
 
 Development
@@ -32,13 +32,11 @@ https://backend-prod.canopy.rent
 
 ## Requesting Your Credentials
 
-Credentials are provided on request by Canopy to yourselves.  Please speak to your account manager here.
+Credentials are provided on request by Canopy to yourselves.  Please speak to your account manager here to obtain the details for the environments.
 
 ## Requesting an API Token
 
-You need to request an API token to make calls to the Canopy API.
-
-In order to do this you need to:
+You need to request an API token to make calls to the Canopy API. In order to do this you need to:
 
 1. Generate a payload using the clientId from the credentials you have been sent.  The example here uses Javascript:
 
@@ -119,9 +117,9 @@ clientId: your client reference
 
 Request body:
 
-Currently, we support 2 request body schemas:
+Currently, we support two request body schemas:
 
-1. With `clientReference` by which we get request details in a separate call:
+1. With `clientReference` we get request details in a separate call:
 
     ```
     "clientReference": string | (required)
@@ -143,16 +141,14 @@ Currently, we support 2 request body schemas:
     "itemType": enum | (required) INSTANT, FULL
     ```
 
-Response:
-
-- If Canopy server successfully registered a new referencing request, the response will be the following:
+If a referencing request is registered successfully you will receive the following response:
 
   ```
   "requestId" - the identifier of the request,
   "success": true
   ```
 
-- If the server threw an `authentication` error while handling a new request, then the response will be the following:
+If there was an `authentication` error while handling a new request, then you will receive the following:
 
   ```
   "success": false,
@@ -163,7 +159,7 @@ Response:
     "message" - error message
   }
   ```
-- If the server threw a `validation` error while handling a new request, then the response will be the following:
+If there was a `validation` error while handling a new request, then you will receive the following:
 
   ```
   "success": false,
@@ -180,6 +176,12 @@ Response:
       }
   }
   ```
+
+### Referencing Updates (Milestones)
+
+There are a number of milestone updates as part of the referencing process:
+
+* TODO: Zhenya
 
 ### Document Updates
 
