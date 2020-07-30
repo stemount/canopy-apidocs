@@ -15,20 +15,9 @@ We follow standard behaviour in terms of URL's, JSON request/response bodies whe
 Canopy has three environments. Each environment has its own URL, which will be used by external clients in order to test functionality and then use
 it on production:
 
-Development
-```
-https://backend-dev-qwertyuiop.canopy.rent
-```
-
-Staging
-```
-https://backend-stag-qwertyuiop.canopy.rent
-```
-
-Production
-```
-https://backend-prod.canopy.rent
-```
+* Development
+* Staging
+* Production
 
 ## Requesting Your Credentials
 
