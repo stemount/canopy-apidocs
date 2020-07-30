@@ -181,7 +181,27 @@ If there was a `validation` error while handling a new request, then you will re
 
 There are a number of milestone updates as part of the referencing process:
 
-* TODO: Zhenya
+- `INVITED` - the user was invited to connect;
+
+- `INVITE_RESENT` - resent invitation email for the user;
+
+- `CONNECTED` - user accepts the connection;
+
+- `CONNECTION_REJECTED` - user rejects the connection;
+
+- `CONNECTION_STOPPED` - user stops the connection;
+
+- `SENDING_COMPLETED_PASSPORT_FAILED` - sending the completed passport to Chancellors failed;
+
+- `PASSPORT_COMPLETED` - `user complete his passport and the document was sent;
+
+- `INVALID_APPLICATION_DETAILS` - Chancellors response for application details was invalid;
+
+- `APPLICATION_DETAILS_REQUEST_FAILED` - request for Application details from Chancellors failed;
+
+- `APPLICATION_DETAILS_NOT_MATCHED` - Chancellors response for application details matching return unsuccessful value;
+
+- `APPLICATION_DETAILS_MATCHING_FAILED` - request for matching application details failed.
 
 ### Document Updates
 
