@@ -85,7 +85,7 @@ If the request is successful, the response body will contain the token for futur
 ...
 Response: {
   "success": true,
-  "access_token": "Bearer eyaasd456FFGDFGdfgdfgdfgdfg7sdyfg359tu345gtbsdv784ygtbkjl3g80y35htjl3bhef89y4rjkbergv-KAj-dGh0xEuZftO_Utm6dugKQ",
+  "access_token": "Bearer eyaasd456FFGDFGdfgdfgdfgdfg7sdyfg35htjl3bhef89y4rjkbergv-KAj-dGh0xEuZftO_Utm6dugKQ",
   "expires": 1594907203
 }
 ...
