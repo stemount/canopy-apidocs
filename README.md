@@ -124,7 +124,7 @@ Currently, we support two request body schemas:
     "clientReferenceId": string | (optional) this is unique identifier on the client's side
     ```
 
-2. [ADDITIONAL SCHEMA] With `clientReference` we get request details in a separate call:
+2. [ALTERNATIVE SCHEMA] With `clientReference` we get request details in a separate call:
 
     ```
     "clientReference": string | (required)
@@ -204,7 +204,7 @@ Once referencing has been completed by the renter in the Canopy mobile applicati
       "clientReferenceId": string,
       "canopyReferenceId": uuid,
       "document": { 
-        "documentType": number,
+        "documentType": enum | 0 (means INSTANT screening type) or 1 (means FULL screening type),
         "url": `/referencing-requests/client/${clientId}/documents/${documentId}`,
         "maxRent": number,
         "status": string,
@@ -212,13 +212,13 @@ Once referencing has been completed by the renter in the Canopy mobile applicati
       }
       ```
 
-  2. [ADDITIONAL SCHEMA]
+  2. [ALTERNATIVE SCHEMA]
       ```
       "clientReferenceId": string,
       "canopyReferenceId": uuid,
       "document": [
         { 
-          "documentType": number,
+          "documentType": enum | 0 (means INSTANT screening type) or 1 (means FULL screening type),
           "url": `/referencing-requests/client/${clientId}/documents/${documentId}`,
           "maxRent": number,
           "status": string,
