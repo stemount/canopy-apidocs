@@ -29,56 +29,56 @@ You need to request an API token to make calls to the Canopy API. In order to do
 
 1. Generate a payload using the clientId from the credentials you have been sent.  The example here uses Javascript:
 
-```
-function generatePayload(clientId) {
-  const now = Math.floor(Date.now() / 1000); // sec
-    const expires = now + 60 * 60;
-    var payload = {
-        iss: 'canopy.rent',
-        scope: 'request.write_only document.read_only',
-        aud: `referencing-requests/client/${clientId}/token`,
-        exp: expires,
-        iat: now
-    };
-  return base64url.encode(JSON.stringify(payload))
-}
-```
+    ```
+    function generatePayload(clientId) {
+      const now = Math.floor(Date.now() / 1000); // sec
+        const expires = now + 60 * 60;
+        var payload = {
+            iss: 'canopy.rent',
+            scope: 'request.write_only document.read_only',
+            aud: `referencing-requests/client/${clientId}/token`,
+            exp: expires,
+            iat: now
+        };
+      return base64url.encode(JSON.stringify(payload))
+    }
+    ```
 
 2. You need to sign this with JWT (e.g. jsonwebtoken in Javascript) using the secretKey in the credentials you were sent
 
-```
-const jwtKey = jwt.sign(generatePayload(config), secretKey);
-```
+    ```
+    const jwtKey = jwt.sign(generatePayload(config), secretKey);
+    ```
 
-The BODY of the request should include the following
-```
-jwtKey: jwtKey
-```
+    The BODY of the request should include the following
+    ```
+    jwtKey: jwtKey
+    ```
 
 3. The header of the request should include the apiKey from the credentials you were sent
 
-```
-x-api-key: apiKey
-```
+    ```
+    x-api-key: apiKey
+    ```
 
 4. Finally make a POST request with the header and body to the following endpoint:
 
-```
-POST /referencing-requests/client/:clientId/token
-```
+    ```
+    POST /referencing-requests/client/:clientId/token
+    ```
 
-If the request is successful, the response body will contain the token for future API requests with an expires timestamp:
+    If the request is successful, the response body will contain the token for future API requests with an expires timestamp:
 
 
-```
-...
-Response: {
-  "success": true,
-  "access_token": "Bearer eyaasd456FFGDFGdfgdfgdfgdfg7sdyfg35htjl3bhef89y4rjkbergv-KAj-dGh0xEuZftO_Utm6dugKQ",
-  "expires": 1594907203
-}
-...
-```
+    ```
+    ...
+    Response: {
+      "success": true,
+      "access_token": "Bearer eyaasd456FFGDFGdfgdfgdfgdfg7sdyfg35htjl3bhef89y4rjkbergv-KAj-dGh0xEuZftO_Utm6dugKQ",
+      "expires": 1594907203
+    }
+    ...
+    ```
 
 ## Using the Authorization Token
 
@@ -108,17 +108,7 @@ Request body:
 
 Currently, we support two request body schemas:
 
-1. With `clientReference` we get request details in a separate call:
-
-    ```
-    "clientReference": string | (required)
-    "canopyReference": uuid | (optional) this is an identifier of the same user in Canopy database
-    "branchId": uuid | (optional) this is an identifier of the client's branch which requests the user
-    "requestType": enum | (required) RENTER_SCREENING, GUARANTOR_SCREENING
-    "itemType": enum  | (required) INSTANT, FULL
-    ```
-
-2. With all user details at registration and callback URL:
+1. [DEFAULT SCHEMA] With all user details at registration and callback URL:
 
     ```
     "email": string | (required)
@@ -128,6 +118,20 @@ Currently, we support two request body schemas:
     "callbackUrl": string | (required) URL to which Canopy will send PDF Report
     "requestType": enum | (required) RENTER_SCREENING, GUARANTOR_SCREENING
     "itemType": enum | (required) INSTANT, FULL
+    "title": string | (optional) it's a title used before a surname or full name
+    "phone": string | (optional)
+    "branchId": string | (optional) this is an identifier of the client's branch which requests the user
+    "clientReferenceId": string | (optional) this is unique identifier on the client's side
+    ```
+
+2. [ALTERNATIVE SCHEMA] With `clientReference` we get request details in a separate call:
+
+    ```
+    "clientReference": string | (required)
+    "canopyReference": uuid | (optional) this is an identifier of the same user in Canopy database
+    "branchId": uuid | (optional) this is an identifier of the client's branch which requests the user
+    "requestType": enum | (required) RENTER_SCREENING, GUARANTOR_SCREENING
+    "itemType": enum  | (required) INSTANT, FULL
     ```
 
 If a referencing request is registered successfully you will receive the following response:
@@ -194,15 +198,38 @@ There are a number of milestone updates as part of the referencing process:
 
 ### Document Updates
 
-Once referencing has been completed by the renter in the Canopy mobile application, an update message will be sent by the Canopy platform to an endpoint to indicate completion.  This will include a field for the URL to download the passport from:
+Once referencing has been completed by the renter in the Canopy mobile application, an update message will be sent by the Canopy platform to an endpoint to indicate completion. This will include a field for the URL to download the passport from. Currently, we support 2 response schemas, which correspond to the request body schema:
+  1. [DEFAULT SCHEMA]
+      ```
+      "clientReferenceId": string,
+      "canopyReferenceId": uuid,
+      "document": { 
+        "documentType": enum | 0 (means INSTANT screening type) or 1 (means FULL screening type),
+        "url": `/referencing-requests/client/${clientId}/documents/${documentId}`,
+        "maxRent": number,
+        "status": string,
+        "title": enum | INSTANT, FULL
+      }
+      ```
 
-```
-GET /referencing-requests/client/${clientId}/documents/{documentId}
-```
+  2. [ALTERNATIVE SCHEMA]
+      ```
+      "clientReferenceId": string,
+      "canopyReferenceId": uuid,
+      "document": [
+        { 
+          "documentType": enum | 0 (means INSTANT screening type) or 1 (means FULL screening type),
+          "url": `/referencing-requests/client/${clientId}/documents/${documentId}`,
+          "maxRent": number,
+          "status": string,
+          "title": enum | INSTANT, FULL
+        }
+      ]
+      ```
 
 ### Rent Passport Retrieval
 
-To retrieve a PDF rent passport following successful referencing completion, you can use the following:
+To retrieve a PDF rent passport following successful referencing completion, you can use the `url` field from the response:
 
 ```
 GET /referencing-requests/client/${clientId}/documents/${documentId}
