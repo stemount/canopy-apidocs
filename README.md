@@ -93,6 +93,115 @@ This token has an expiryTime of 20 minutes, after which you will receive an auth
 
 ## Referencing Endpoints
 
+### Get the List of Branches
+
+The endpoint below returns the list of client's branches mapped with Canopy branches:
+```
+GET /referencing-requests/client/:clientId/branches-list
+```
+
+Parameters:
+```
+clientId: your client reference
+```
+
+Response body:
+```
+/* an array of branches, each of them has the following structure */
+
+"branches": [
+  {
+    "canopyBranchId": string — id of the Canopy branch,
+    "clientBranchId": string — id of the client's branch,
+    "branchName": string — the name of the Canopy branch,
+    "branchAddress": {
+      "id": string,
+      "line1": string,
+      "line2": string,
+      "line3": string,
+      "street": string,
+      "town": string,
+      "postCode": string,
+      "countryCode": string,
+      "flat": string,
+      "district": string,
+      "houseNumber": string,
+      "houseName": string
+    },
+  }
+]
+```
+
+### Link Branch
+The endpoint below links existing Canopy branch with client's branch:
+
+```
+POST /referencing-requests/client/:clientId/link-branch
+```
+
+Parameters:
+```
+clientId: your client reference
+```
+
+Request body:
+```
+canopyBranchId: string
+clientBranchId: string
+```
+
+Successful response body:
+```
+"canopyBranchId": string — id of the Canopy branch
+"clientBranchId": string — id of the client's branch,
+"branchName": string — name of the Canopy branch
+"branchAddress": {
+  "id": string,
+  "line1": string,
+  "line2": string,
+  "line3": string,
+  "street": string,
+  "town": string,
+  "postCode": string,
+  "countryCode": string,
+  "flat": string,
+  "district": string,
+  "houseNumber": string,
+  "houseName": string
+}
+```
+
+Unsuccessful response body:
+```
+/* If requested Canopy branch is not associated with client's agency you’ll get the following error */
+
+"success": false,
+"requestId" — the identifier of the request,
+"error": {
+  "status": 400,
+  "type" — error type,
+  "message" — “Requested canopy branch is not associated with the client's agency”,
+}
+```
+
+### Delete Branch Mapping
+The endpoints below deletes existing branch mapping between Canopy and client:
+
+```
+DELETE /referencing-requests/client/:clientId/branch-mapping/:clientBranchId
+```
+
+Parameters:
+```
+clientId: your client reference
+clientBranchId: id of the branch linked with the Canopy branch
+```
+
+Response body:
+```
+clientBranchId: string
+```
+
 ### Request Referencing
 
 ```
@@ -203,7 +312,7 @@ Once referencing has been completed by the renter in the Canopy mobile applicati
       ```
       "clientReferenceId": string,
       "canopyReferenceId": uuid,
-      "document": { 
+      "document": {
         "documentType": enum | 0 (means INSTANT screening type) or 1 (means FULL screening type),
         "url": `/referencing-requests/client/${clientId}/documents/${documentId}`,
         "maxRent": number,
@@ -217,7 +326,7 @@ Once referencing has been completed by the renter in the Canopy mobile applicati
       "clientReferenceId": string,
       "canopyReferenceId": uuid,
       "document": [
-        { 
+        {
           "documentType": enum | 0 (means INSTANT screening type) or 1 (means FULL screening type),
           "url": `/referencing-requests/client/${clientId}/documents/${documentId}`,
           "maxRent": number,
@@ -255,7 +364,7 @@ content-disposition: attachment; filename='9e6222ee-312b-2297-a03a-07700363a6b6_
 We use conventional HTTP response codes to indicate the success or failure of an API request, typically one of:
 
 * 2xx - indicate success
-* 4xx - indicate an client error with information provided (missign required parameters etc..)
+* 4xx - indicate a client error with information provided (missign required parameters etc..)
 * 5xx - indicate an error with the Canopy platform
 
 We suggest you wrap 4xx errors in your client and provide a user friendly message to your end users as part of the integration.
