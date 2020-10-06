@@ -91,6 +91,27 @@ Authorization: token
 
 This token has an expiryTime of 20 minutes, after which you will receive an authorization error, and you will then need to retrieve a new token.
 
+
+## Refresh Secret Key
+
+Requires authorization. This endpoint may be called to change current `secretKey` and get back freshly generated one. Accepts currently active `secretKey` in request body. After receiving successful response with new `secretKey`, previous `secretKey` becomes stale and should not be used for generation `jwtKey`.
+
+```
+POST /referencing-requests/client/refresh
+```
+
+Request body:
+
+```
+secretKey: string;
+```
+
+Response body:
+
+```
+secretKey: string;
+```
+
 ## Referencing Endpoints
 
 ### Get the List of Branches
@@ -375,27 +396,71 @@ content-type: application/pdf
 content-disposition: attachment; filename='9e6222ee-312b-2297-a03a-07700363a6b6_FULL.pdf'
 ```
 
-### Refresh secret key
+## Webhooks Endpoints
 
-Requires authorization. This endpoint may be called to change current secretKey and get back freshly generated one. Accepts currently active secretKey in request body. After receiving successful response with new secretKey, previous secretKey becomes stale and should not be used for generation jwtKey.
+### Register Webhook
+
+The endpoint below registers the webhook with the appropriate type in Canopy system. After that, Rent Passport updates will be sent to the specified callback url.
 
 ```
-POST /referencing-requests/client/refresh
+POST /referencing-requests/client/:clientId/webhook/register
+```
+
+Parameters:
+
+```
+clientId: your client reference
 ```
 
 Request body:
 
 ```
-{
-  secretKey: string;
-}
+type: string (required) - scpecifies which type of updates will be sent from Canopy, one of ["PASSPORT_STATUS_UPDATES", "REQUEST_STATUS_UPDATES"];
+callbackUrl: string (required) - the URL of the webhook endpoint;
+additionalSettings: string[] (optional) - list of Rent Passport sections for which updates will be sent;
 ```
 
-Response body:
+Successful response body:
 
 ```
-{
-  secretKey: string;
+"success": true,
+"webhookType": string,
+"callbackUrl": string
+```
+
+### Unregister Webhook
+
+The endpoint below unregisters webhook and stops sending Rent Passport updates to the specified callback URL.
+
+```
+DELETE /referencing-requests/client/:clientId/webhook/:webhookType
+```
+
+Parameters:
+
+```
+clientId: your client reference,
+webhookType: the type of the webhook you want to unregister
+```
+
+Successful response body:
+
+```
+"success": true,
+"webhookType": string
+```
+
+Unsuccessful response body:
+
+```
+/* If you don't have webhook subscriptions of the specified type */
+
+"success": false,
+"requestId" — the identifier of the request,
+"error": {
+  "status": 404,
+  "type" — error type,
+  "message" — “No webhooks of the specified type found”,
 }
 ```
 
