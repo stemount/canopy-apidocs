@@ -256,7 +256,7 @@ Currently, we support two request body schemas:
    "email": string | (required)
    "firstName": string | (optional)
    "middleName": string | (optional)
-   "latName": string | (optional)
+   "lastName": string | (optional)
    "callbackUrl": string | (required) URL to which Canopy will send PDF Report
    "requestType": enum | (required) RENTER_SCREENING, GUARANTOR_SCREENING
    "itemType": enum | (required) INSTANT, FULL
