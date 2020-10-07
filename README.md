@@ -247,34 +247,19 @@ clientId: your client reference
 ```
 
 Request body:
-
-Currently, we support two request body schemas:
-
-1. [DEFAULT SCHEMA] With all user details at registration and callback URL:
-
-   ```
-   "email": string | (required)
-   "firstName": string | (optional)
-   "middleName": string | (optional)
-   "lastName": string | (optional)
-   "callbackUrl": string | (required) URL to which Canopy will send PDF Report
-   "requestType": enum | (required) RENTER_SCREENING, GUARANTOR_SCREENING
-   "itemType": enum | (required) INSTANT, FULL
-   "title": string | (optional) it's a title used before a surname or full name
-   "phone": string | (optional)
-   "branchId": string | (optional) this is an identifier of the client's branch which requests the user
-   "clientReferenceId": string | (optional) this is unique identifier on the client's side
-   ```
-
-2. [ALTERNATIVE SCHEMA] With `clientReference` we get request details in a separate call:
-
-   ```
-   "clientReference": string | (required)
-   "canopyReference": uuid | (optional) this is an identifier of the same user in Canopy database
-   "branchId": uuid | (optional) this is an identifier of the client's branch which requests the user
-   "requestType": enum | (required) RENTER_SCREENING, GUARANTOR_SCREENING
-   "itemType": enum  | (required) INSTANT, FULL
-   ```
+```
+email: string (required),
+firstName: string (optional),
+middleName: string (optional),
+lastName: string (optional),
+callbackUrl: string (required) - URL to which Canopy will send PDF Report,
+requestType: enum (required) - one of [RENTER_SCREENING, GUARANTOR_SCREENING],
+itemType: enum (required) - one of [INSTANT, FULL],
+title: string (optional) - it's a title used before a surname or full name,
+phone: string (optional),
+branchId: string (optional) - this is an identifier of the client's branch which requests the user,
+clientReferenceId: string (optional) - this is unique identifier on the client's side
+```
 
 If a referencing request is registered successfully you will receive the following response:
 
@@ -313,71 +298,26 @@ If there was a `validation` error while handling a new request, then you will re
 }
 ```
 
-### Referencing Updates (Milestones)
-
-There are a number of milestone updates as part of the referencing process:
-
-- `INVITED` - the user was invited to connect;
-
-- `INVITE_RESENT` - resent invitation email for the user;
-
-- `CONNECTED` - user accepts the connection;
-
-- `CONNECTION_REJECTED` - user rejects the connection;
-
-- `CONNECTION_STOPPED` - user stops the connection;
-
-- `SENDING_COMPLETED_PASSPORT_FAILED` - sending the completed passport to Chancellors failed;
-
-- `PASSPORT_COMPLETED` - `user complete his passport and the document was sent;
-
-- `INVALID_APPLICATION_DETAILS` - Chancellors response for application details was invalid;
-
-- `APPLICATION_DETAILS_REQUEST_FAILED` - request for Application details from Chancellors failed;
-
-- `APPLICATION_DETAILS_NOT_MATCHED` - Chancellors response for application details matching return unsuccessful value;
-
-- `APPLICATION_DETAILS_MATCHING_FAILED` - request for matching application details failed.
-
-### Document Updates
-
-Once referencing has been completed by the renter in the Canopy mobile application, an update message will be sent by the Canopy platform to an endpoint to indicate completion. This will include a field for the URL to download the passport from. Currently, we support 2 response schemas, which correspond to the request body schema:
-
-1. [DEFAULT SCHEMA]
-
-   ```
-   "clientReferenceId": string,
-   "canopyReferenceId": uuid,
-   "document": {
-     "documentType": enum | 0 (means INSTANT screening type) or 1 (means FULL screening type),
-     "url": `/referencing-requests/client/${clientId}/documents/${documentId}`,
-     "maxRent": number,
-     "status": string,
-     "title": enum | INSTANT, FULL
-   }
-   ```
-
-2. [ALTERNATIVE SCHEMA]
-   ```
-   "clientReferenceId": string,
-   "canopyReferenceId": uuid,
-   "document": [
-     {
-       "documentType": enum | 0 (means INSTANT screening type) or 1 (means FULL screening type),
-       "url": `/referencing-requests/client/${clientId}/documents/${documentId}`,
-       "maxRent": number,
-       "status": string,
-       "title": enum | INSTANT, FULL
-     }
-   ]
-   ```
-
 ### Rent Passport Retrieval
 
-To retrieve a PDF rent passport following successful referencing completion, you can use the `url` field from the response:
+Once referencing has been completed by the renter in the Canopy mobile application, an update message will be sent to the `callbackUrl` provided at the moment of referencing request. This message will have the following structure:
 
 ```
-GET /referencing-requests/client/${clientId}/documents/${documentId}
+clientReferenceId: string,
+canopyReferenceId: uuid,
+document: {
+  documentType: enum - one of [0, 1]; /* 0 means INSTANT screening type, 1 means FULL screening type */
+  url: `/referencing-requests/client/:clientId/documents/:documentId`,
+  maxRent: number,
+  status: string,
+  title: enum - one of [INSTANT, FULL]
+}
+```
+
+To retrieve a PDF Rent Passport after successful referencing completion, you can use the `url` field from the above response:
+
+```
+GET /referencing-requests/client/:clientId/documents/:documentId
 ```
 
 Parameters:
@@ -427,6 +367,38 @@ Successful response body:
 "webhookType": string,
 "callbackUrl": string
 ```
+
+If you subscribed to the `REQUEST_STATUS_UPDATES` type, the updates will be sent to the `callbackUrl` each time one of the following events trigger:
+
+- `INVITED` - the user was invited to connect;
+
+- `INVITE_RESENT` - resent invitation email for the user;
+
+- `CONNECTED` - user accepts the connection;
+
+- `CONNECTION_REJECTED` - user rejects the connection;
+
+- `CONNECTION_STOPPED` - user stops the connection;
+
+- `SENDING_COMPLETED_PASSPORT_FAILED` - sending the completed passport to client failed;
+
+- `PASSPORT_COMPLETED` - `user complete his passport and the document was sent;
+
+- `INVALID_APPLICATION_DETAILS` - client's request body with application details was invalid;
+
+If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be sent to the `callbackUrl` when one of the following Rent Passport sections is updated:
+
+- `CREDIT CHECK`
+
+- `INCOME`
+
+- `RENT`
+
+- `SAVINGS`
+
+- `LANDLORD REFERENCE` - optional, only if requested;
+
+- `EMPLOYER REFERENCE` - optional, only if requested;
 
 ### Unregister Webhook
 
