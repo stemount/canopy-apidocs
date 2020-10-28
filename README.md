@@ -357,7 +357,10 @@ Request body:
 ```
 type: string (required) - scpecifies which type of updates will be sent from Canopy, one of ["PASSPORT_STATUS_UPDATES", "REQUEST_STATUS_UPDATES"];
 callbackUrl: string (required) - the URL of the webhook endpoint;
-additionalSettings: string[] (optional) - list of Rent Passport sections for which updates will be sent;
+additionalSettings: string[] (optional) - list of Rent Passport sections for which updates will be sent; 
+  - This field should only be added in case "PASSPORT_STATUS_UPDATES" webhook type is specified. 
+  - The following sections can be specified inside the array: ["INCOME", "RENT", "CREDIT_CHECK", "SAVINGS", "RENTAL_PREFERENCES", "EMPLOYEE_REFERENCE", "LANDLORD_REFERENCE"]
+  - There is no need to explicitly specify the names of all sections if you want to receive all updates. Just send an empty array - []. 
 ```
 
 Successful response body:
@@ -386,7 +389,7 @@ If you subscribed to the `REQUEST_STATUS_UPDATES` type, the updates will be sent
 
 - `INVALID_APPLICATION_DETAILS` - client's request body with application details was invalid;
 
-If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be sent to the `callbackUrl` when one of the following Rent Passport sections is updated:
+If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be sent to the `callbackUrl` when one of the following Rent Passport sections is updated (if updates for this section requested):
 
 - `CREDIT CHECK`
 
@@ -396,9 +399,9 @@ If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be
 
 - `SAVINGS`
 
-- `LANDLORD REFERENCE` - optional, only if requested;
+- `LANDLORD REFERENCE` - optional, only if FULL SCREENING requested;
 
-- `EMPLOYER REFERENCE` - optional, only if requested;
+- `EMPLOYER REFERENCE` - optional, only if FULL SCREENING requested;
 
 ### Unregister Webhook
 
