@@ -389,6 +389,15 @@ If you subscribed to the `REQUEST_STATUS_UPDATES` type, the updates will be sent
 
 - `INVALID_APPLICATION_DETAILS` - client's request body with application details was invalid;
 
+
+Once `REQUEST_STATUS_UPDATES` event trigger, the Canopy should sent the notification to `callbackUrl` in the following format:
+
+```
+canopyReferenceId: uuid,
+clientReferenceId: string,
+notes: string,
+```
+
 If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be sent to the `callbackUrl` when one of the following Rent Passport sections is updated (if updates for this section requested):
 
 - `CREDIT CHECK`
@@ -402,6 +411,36 @@ If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be
 - `LANDLORD REFERENCE` - optional, only if FULL SCREENING requested;
 
 - `EMPLOYER REFERENCE` - optional, only if FULL SCREENING requested;
+
+
+Once `PASSPORT_STATUS_UPDATES` event trigger, the Canopy should sent the notification to `callbackUrl` in the following format:
+
+```
+canopyReferenceId: uuid,
+clientReferenceId: uuid,
+updatedSection: {
+  type: enum - one of [INCOME, RENT, CREDIT_CHECK, SAVINGS, EMPLOYEE_REFERENCE, LANDLORD_REFERENCE],
+  newStatus: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+  updatedAt: ISODateTime,
+},
+instant: {
+  status: enum - one of [NOT_STARTED, IN_PROGRESS, ACCEPT, CONSIDER, HIGH_RISK],
+  sections: {
+    income: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+    rent: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+    creditCheck: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+    savings: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+  };
+};
+full: { /* optional field, sent only if FULL SCREENING requested  */
+  status: enum - one of [NOT_STARTED, IN_PROGRESS, ACCEPT, CONSIDER, HIGH_RISK],
+  sections: {
+    employerReference: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+    landlordReference: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+  };
+};
+globalStatus: enum - one of [NOT_STARTED, IN_PROGRESS, ACCEPT, CONSIDER, HIGH_RISK],
+```
 
 ### Unregister Webhook
 
