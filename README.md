@@ -112,6 +112,253 @@ Response body:
 secretKey: string;
 ```
 
+## Prefill User's Rent Passport with Existing Data
+
+If you already have some user information, such as identity, income and (or) rent, you can send it Canopy, so we will prefill the user's Rent Passport with provided data.
+
+### Set Identity
+
+```
+POST /referencing-requests/client-user-data/set-identity
+```
+
+Request Body
+
+```
+email: string (required)
+firstName: string (required)
+middleName: string (optional)
+lastName: string (required)
+dateOfBirth: string (required, date format YYYY-MM-DD)
+phone: string (required)
+addresses: [ /* an array of addresses, each of them has the following format */
+  {
+    startDate: string (required)
+    flat: string (optional)
+    houseNumber: string (required if houseName is not present)
+    houseName: string (required of houseNumber is not present)
+    street: string (required)
+    countryCode: string (required)
+    county: string (optional)
+    town: string (required)
+    postCode: string (required),
+    line1: string (optional)
+    line2: string (optional)
+    line3: string (optional)
+  }
+]
+```
+
+Response Body
+
+```
+email: string;
+firstName: string;
+lastName: string;
+dateOfBirth: ISODate;
+phone: string;
+addresses - array of provided addresses;
+middleName: string (optional);
+```
+
+### Set Income
+
+```
+POST /referencing-requests/client-user-data/set-income
+```
+
+Request Body
+
+```
+email: string, (required);
+data: { /* required field with the following structure: */
+  income: required array of income objects, minimum 1 item;
+}
+```
+
+The objects inside the "income" array from the above request body can be any of the following:
+
+- "EMPLOYED" type 
+  ```
+  incomeSource: "EMPLOYED", required
+  annualSalary: number, required
+  paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+  additionalInfo: string, required
+  employment: {
+    companyName: string, required
+    jobTitle: string, required
+    employmentStatus: string, one of ["FULL_TIME", "PART_TIME"], required
+    employmentBasis: string, one of ["PERMANENT", "CONTRACT"], required
+    startDate: string, date format YYYY-MM-DD, required
+  }
+  ```
+
+- "SELF_EMPLOYED" type
+  ```
+  incomeSource: "SELF_EMPLOYED", required
+  annualSalary: number, required
+  paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+  additionalInfo: string, required,
+  employment: {
+    incomeName: string, required
+    jobTitle: string, required
+    startDate: string, date format YYYY-MM-DD, required
+  }
+  ```
+
+- "STUDENT" type
+  ```
+    incomeSource: "STUDENT", required
+    annualSalary: number, required
+    paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+    additionalInfo: string, required,
+    employment: {
+      educationalInstitutionName: string, required
+      grantsAvailability: boolean, required
+      startDate: string, date format YYYY-MM-DD, required if grantsAvailability is true
+    }
+  ```
+
+- "RETIRED", "UNEMPLOYED", "BENEFITS" or "OTHER" type
+  ```
+    incomeSource: string, ["RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER"], required
+    annualSalary: number, required
+    paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+    additionalInfo: string, required,
+    employment: {
+      incomeName: string, required
+      description: string, required
+      startDate: string, date format YYYY-MM-DD, required
+    }
+  ```
+
+
+Response Body
+
+```
+clientId: uuid;
+email: string;
+income: [ /* array of objects, each of them has the following structure */
+  {
+    incomeSource: string, one of ["EMPLOYED", "SELF_EMPLOYED", "STUDENT", "RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER", "NO_INCOME"];
+    annualSalary: number;
+    paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY", "OTHER"];
+    additionalInfo: string, optional;
+    employment: object, can take one of the schemas below;
+  }
+]
+```
+
+The "employment" field from the above response can be one of the following:
+
+- 
+  ```
+  Employed {
+    companyName: string;
+    jobTitle: string;
+    employmentStatus: string, one of ["FULL_TIME", "PART_TIME"];
+    employmentBasis: string, one of ["PERMANENT", "CONTRACT"];
+    startDate: Date;
+  }
+  ```
+
+- 
+  ```
+  SelfEmployed {
+    incomeName: string;
+    jobTitle: string;
+    startDate: Date;
+  }
+  ```
+
+-
+  ```
+  Student {
+    educationalInstitutionName: string;
+    grantsAvailability: boolean;
+    startDate?: Date;
+  }
+  ```
+
+- 
+  ```
+  Retired {
+    incomeName: string;
+    description: string;
+    startDate: Date;
+  }
+  ```
+
+-
+  ```
+  Unemployed {
+    incomeName: string;
+    description: string;
+    startDate: Date;
+  }
+  ```
+
+-
+  ```
+  Benefits {
+    incomeName: string;
+    description: string;
+    startDate: Date;
+  }
+  ```
+
+-
+  ```
+  Other {
+    incomeName: string;
+    description: string;
+    startDate: Date;
+  }
+  ```
+
+### Set Rent
+
+```
+POST /referencing-requests/client-user-data/set-rent
+```
+
+Request Body
+
+```
+email: string, required,
+data: {
+  homeowner: boolean, required
+  rentsDuringLastYear: boolean, required
+  rents: [ required if rentsDuringLastYear == true, minimum 1 item
+    {
+      name: string, required
+      paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+      rentPaymentAmount: number, required
+      rentPaidTo: string, required
+    }
+  ]
+}
+```
+
+Response Body
+
+```
+clientId: uuid;
+email: string;
+rentData: {
+  homeowner: boolean;
+  rentsDuringLastYear: boolean;
+  rents: [ /* optional field */
+    {
+      name: string;
+      paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"];
+      rentPaymentAmount: number;
+      rentPaidTo: string;
+    }
+  ];
+```
+
+
 ## Referencing Endpoints
 
 ### Get the List of Branches
@@ -357,7 +604,10 @@ Request body:
 ```
 type: string (required) - scpecifies which type of updates will be sent from Canopy, one of ["PASSPORT_STATUS_UPDATES", "REQUEST_STATUS_UPDATES"];
 callbackUrl: string (required) - the URL of the webhook endpoint;
-additionalSettings: string[] (optional) - list of Rent Passport sections for which updates will be sent;
+additionalSettings: string[] (optional) - list of Rent Passport sections for which updates will be sent; 
+  - This field should only be added in case "PASSPORT_STATUS_UPDATES" webhook type is specified. 
+  - The following sections can be specified inside the array: ["INCOME", "RENT", "CREDIT_CHECK", "SAVINGS", "RENTAL_PREFERENCES", "EMPLOYEE_REFERENCE", "LANDLORD_REFERENCE"]
+  - There is no need to explicitly specify the names of all sections if you want to receive all updates. Just send an empty array - []. 
 ```
 
 Successful response body:
@@ -386,7 +636,16 @@ If you subscribed to the `REQUEST_STATUS_UPDATES` type, the updates will be sent
 
 - `INVALID_APPLICATION_DETAILS` - client's request body with application details was invalid;
 
-If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be sent to the `callbackUrl` when one of the following Rent Passport sections is updated:
+
+Once `REQUEST_STATUS_UPDATES` event trigger, the Canopy should sent the notification to `callbackUrl` in the following format:
+
+```
+canopyReferenceId: uuid,
+clientReferenceId: string,
+notes: string,
+```
+
+If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be sent to the `callbackUrl` when one of the following Rent Passport sections is updated (if updates for this section requested):
 
 - `CREDIT CHECK`
 
@@ -396,9 +655,39 @@ If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be
 
 - `SAVINGS`
 
-- `LANDLORD REFERENCE` - optional, only if requested;
+- `LANDLORD REFERENCE` - optional, only if FULL SCREENING requested;
 
-- `EMPLOYER REFERENCE` - optional, only if requested;
+- `EMPLOYER REFERENCE` - optional, only if FULL SCREENING requested;
+
+
+Once `PASSPORT_STATUS_UPDATES` event trigger, the Canopy should sent the notification to `callbackUrl` in the following format:
+
+```
+canopyReferenceId: uuid,
+clientReferenceId: uuid,
+updatedSection: {
+  type: enum - one of [INCOME, RENT, CREDIT_CHECK, SAVINGS, EMPLOYEE_REFERENCE, LANDLORD_REFERENCE],
+  newStatus: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+  updatedAt: ISODateTime,
+},
+instant: {
+  status: enum - one of [NOT_STARTED, IN_PROGRESS, ACCEPT, CONSIDER, HIGH_RISK],
+  sections: {
+    income: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+    rent: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+    creditCheck: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+    savings: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+  };
+};
+full: { /* optional field, sent only if FULL SCREENING requested  */
+  status: enum - one of [NOT_STARTED, IN_PROGRESS, ACCEPT, CONSIDER, HIGH_RISK],
+  sections: {
+    employerReference: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+    landlordReference: enum - one of [NOT_STARTED, IN_PROGRESS, DONE],
+  };
+};
+globalStatus: enum - one of [NOT_STARTED, IN_PROGRESS, ACCEPT, CONSIDER, HIGH_RISK],
+```
 
 ### Unregister Webhook
 
