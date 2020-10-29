@@ -131,7 +131,7 @@ middleName: string (optional)
 lastName: string (required)
 dateOfBirth: string (required, date format YYYY-MM-DD)
 phone: string (required)
-addresses: [ /* an array of addresses, each of them in the following format */
+addresses: [ /* an array of addresses, each of them has the following format */
   {
     startDate: string (required)
     flat: string (optional)
