@@ -112,7 +112,9 @@ Response body:
 secretKey: string;
 ```
 
-## 
+## Prefill User's Rent Passport with Existing Data
+
+If you already have some user information, such as identity, income and (or) rent, you can send it Canopy, so we will prefill the user's Rent Passport with provided data.
 
 ### Set Identity
 
@@ -129,7 +131,7 @@ middleName: string (optional)
 lastName: string (required)
 dateOfBirth: string (required, date format YYYY-MM-DD)
 phone: string (required)
-addresses: [ /* an array of addresses, each of them in the followinf format */
+addresses: [ /* an array of addresses, each of them in the following format */
   {
     startDate: string (required)
     flat: string (optional)
@@ -170,76 +172,191 @@ Request Body
 ```
 email: string, (required);
 data: { /* required field with the following structure: */
-  income: object (required, array of income objects, minimum 1 item);
+  income: required array of income objects, minimum 1 item;
 }
 ```
 
-"income" field from the above request body can be one of:
-```
-{
+The objects inside the "income" array from the above request body can be any of the following:
+
+- "EMPLOYED" type 
+  ```
   incomeSource: "EMPLOYED", required
   annualSalary: number, required
-  paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+  paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
   additionalInfo: string, required
   employment: {
     companyName: string, required
     jobTitle: string, required
-    employmentStatus: string, ["FULL_TIME", "PART_TIME"], required
-    employmentBasis: string, ["PERMANENT", "CONTRACT"], required
+    employmentStatus: string, one of ["FULL_TIME", "PART_TIME"], required
+    employmentBasis: string, one of ["PERMANENT", "CONTRACT"], required
     startDate: string, date format YYYY-MM-DD, required
   }
-}
-```
+  ```
 
-```
-{
+- "SELF_EMPLOYED" type
+  ```
   incomeSource: "SELF_EMPLOYED", required
   annualSalary: number, required
-  paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+  paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
   additionalInfo: string, required,
   employment: {
     incomeName: string, required
     jobTitle: string, required
     startDate: string, date format YYYY-MM-DD, required
   }
-}
-```
+  ```
 
-```
-{
-  incomeSource: "STUDENT", required
-  annualSalary: number, required
-  paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
-  additionalInfo: string, required,
-  employment: {
-    educationalInstitutionName: string, required
-    grantsAvailability: boolean, required
-    startDate: string, date format YYYY-MM-DD, required if grantsAvailability is true
-  }
-}
-```
+- "STUDENT" type
+  ```
+    incomeSource: "STUDENT", required
+    annualSalary: number, required
+    paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+    additionalInfo: string, required,
+    employment: {
+      educationalInstitutionName: string, required
+      grantsAvailability: boolean, required
+      startDate: string, date format YYYY-MM-DD, required if grantsAvailability is true
+    }
+  ```
 
-```
-{
-  incomeSource: string, ["RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER"], required
-  annualSalary: number, required
-  paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
-  additionalInfo: string, required,
-  employment: {
-    incomeName: string, required
-    description: string, required
-    startDate: string, date format YYYY-MM-DD, required
-  }
-}
-```
+- "RETIRED", "UNEMPLOYED", "BENEFITS" or "OTHER" type
+  ```
+    incomeSource: string, ["RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER"], required
+    annualSalary: number, required
+    paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+    additionalInfo: string, required,
+    employment: {
+      incomeName: string, required
+      description: string, required
+      startDate: string, date format YYYY-MM-DD, required
+    }
+  ```
 
 
 Response Body
 
 ```
+clientId: uuid;
+email: string;
+income: [ /* array of objects, each of them has the following structure */
+  {
+    incomeSource: string, one of ["EMPLOYED", "SELF_EMPLOYED", "STUDENT", "RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER", "NO_INCOME"];
+    annualSalary: number;
+    paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY", "OTHER"];
+    additionalInfo: string, optional;
+    employment: object, can take one of the schemas below;
+  }
+]
 ```
 
+The "employment" field from the above response can be one of the following:
+
+- 
+  ```
+  Employed {
+    companyName: string;
+    jobTitle: string;
+    employmentStatus: string, one of ["FULL_TIME", "PART_TIME"];
+    employmentBasis: string, one of ["PERMANENT", "CONTRACT"];
+    startDate: Date;
+  }
+  ```
+
+- 
+  ```
+  SelfEmployed {
+    incomeName: string;
+    jobTitle: string;
+    startDate: Date;
+  }
+  ```
+
+-
+  ```
+  Student {
+    educationalInstitutionName: string;
+    grantsAvailability: boolean;
+    startDate?: Date;
+  }
+  ```
+
+- 
+  ```
+  Retired {
+    incomeName: string;
+    description: string;
+    startDate: Date;
+  }
+  ```
+
+-
+  ```
+  Unemployed {
+    incomeName: string;
+    description: string;
+    startDate: Date;
+  }
+  ```
+
+-
+  ```
+  Benefits {
+    incomeName: string;
+    description: string;
+    startDate: Date;
+  }
+  ```
+
+-
+  ```
+  Other {
+    incomeName: string;
+    description: string;
+    startDate: Date;
+  }
+  ```
+
 ### Set Rent
+
+```
+POST /referencing-requests/client-user-data/set-rent
+```
+
+Request Body
+
+```
+email: string, required,
+data: {
+  homeowner: boolean, required
+  rentsDuringLastYear: boolean, required
+  rents: [ required if rentsDuringLastYear == true, minimum 1 item
+    {
+      name: string, required
+      paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+      rentPaymentAmount: number, required
+      rentPaidTo: string, required
+    }
+  ]
+}
+```
+
+Response Body
+
+```
+clientId: uuid;
+email: string;
+rentData: {
+  homeowner: boolean;
+  rentsDuringLastYear: boolean;
+  rents: [ /* optional field */
+    {
+      name: string;
+      paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"];
+      rentPaymentAmount: number;
+      rentPaidTo: string;
+    }
+  ];
+```
 
 
 ## Referencing Endpoints
