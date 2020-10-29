@@ -112,6 +112,136 @@ Response body:
 secretKey: string;
 ```
 
+## 
+
+### Set Identity
+
+```
+POST /referencing-requests/client-user-data/set-identity
+```
+
+Request Body
+
+```
+email: string (required)
+firstName: string (required)
+middleName: string (optional)
+lastName: string (required)
+dateOfBirth: string (required, date format YYYY-MM-DD)
+phone: string (required)
+addresses: [ /* an array of addresses, each of them in the followinf format */
+  {
+    startDate: string (required)
+    flat: string (optional)
+    houseNumber: string (required if houseName is not present)
+    houseName: string (required of houseNumber is not present)
+    street: string (required)
+    countryCode: string (required)
+    county: string (optional)
+    town: string (required)
+    postCode: string (required),
+    line1: string (optional)
+    line2: string (optional)
+    line3: string (optional)
+  }
+]
+```
+
+Response Body
+
+```
+email: string;
+firstName: string;
+lastName: string;
+dateOfBirth: ISODate;
+phone: string;
+addresses - array of provided addresses;
+middleName: string (optional);
+```
+
+### Set Income
+
+```
+POST /referencing-requests/client-user-data/set-income
+```
+
+Request Body
+
+```
+email: string, (required);
+data: { /* required field with the following structure: */
+  income: object (required, array of income objects, minimum 1 item);
+}
+```
+
+"income" field from the above request body can be one of:
+```
+{
+  incomeSource: "EMPLOYED", required
+  annualSalary: number, required
+  paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+  additionalInfo: string, required
+  employment: {
+    companyName: string, required
+    jobTitle: string, required
+    employmentStatus: string, ["FULL_TIME", "PART_TIME"], required
+    employmentBasis: string, ["PERMANENT", "CONTRACT"], required
+    startDate: string, date format YYYY-MM-DD, required
+  }
+}
+```
+
+```
+{
+  incomeSource: "SELF_EMPLOYED", required
+  annualSalary: number, required
+  paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+  additionalInfo: string, required,
+  employment: {
+    incomeName: string, required
+    jobTitle: string, required
+    startDate: string, date format YYYY-MM-DD, required
+  }
+}
+```
+
+```
+{
+  incomeSource: "STUDENT", required
+  annualSalary: number, required
+  paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+  additionalInfo: string, required,
+  employment: {
+    educationalInstitutionName: string, required
+    grantsAvailability: boolean, required
+    startDate: string, date format YYYY-MM-DD, required if grantsAvailability is true
+  }
+}
+```
+
+```
+{
+  incomeSource: string, ["RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER"], required
+  annualSalary: number, required
+  paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
+  additionalInfo: string, required,
+  employment: {
+    incomeName: string, required
+    description: string, required
+    startDate: string, date format YYYY-MM-DD, required
+  }
+}
+```
+
+
+Response Body
+
+```
+```
+
+### Set Rent
+
+
 ## Referencing Endpoints
 
 ### Get the List of Branches
