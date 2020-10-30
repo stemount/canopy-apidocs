@@ -91,7 +91,6 @@ Authorization: token
 
 This token has an expiryTime of 20 minutes, after which you will receive an authorization error, and you will then need to retrieve a new token.
 
-
 ## Refresh Secret Key
 
 Requires authorization. This endpoint may be called to change current `secretKey` and get back freshly generated one. Accepts currently active `secretKey` in request body. After receiving successful response with new `secretKey`, previous `secretKey` becomes stale and should not be used for generation `jwtKey`.
@@ -178,12 +177,13 @@ data: { /* required field with the following structure: */
 
 The objects inside the "income" array from the above request body can be any of the following:
 
-- "EMPLOYED" type 
+- "EMPLOYED" type
+
   ```
   incomeSource: "EMPLOYED", required
-  annualSalary: number, required
+  annualSalary: integer, required
   paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
-  additionalInfo: string, required
+  additionalInfo: string, optional
   employment: {
     companyName: string, required
     jobTitle: string, required
@@ -194,11 +194,12 @@ The objects inside the "income" array from the above request body can be any of 
   ```
 
 - "SELF_EMPLOYED" type
+
   ```
   incomeSource: "SELF_EMPLOYED", required
-  annualSalary: number, required
+  annualSalary: integer, required
   paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
-  additionalInfo: string, required,
+  additionalInfo: string, optional,
   employment: {
     incomeName: string, required
     jobTitle: string, required
@@ -207,11 +208,12 @@ The objects inside the "income" array from the above request body can be any of 
   ```
 
 - "STUDENT" type
+
   ```
     incomeSource: "STUDENT", required
-    annualSalary: number, required
-    paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
-    additionalInfo: string, required,
+    annualSalary: integer, required
+    paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY", "OTHER"], required
+    additionalInfo: string, optional,
     employment: {
       educationalInstitutionName: string, required
       grantsAvailability: boolean, required
@@ -222,16 +224,15 @@ The objects inside the "income" array from the above request body can be any of 
 - "RETIRED", "UNEMPLOYED", "BENEFITS" or "OTHER" type
   ```
     incomeSource: string, ["RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER"], required
-    annualSalary: number, required
-    paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
-    additionalInfo: string, required,
+    annualSalary: integer, required
+    paymentFrequency: string, ["MONTHLY", "TWO_WEEKLY", "WEEKLY", "OTHER"], required
+    additionalInfo: string, optional,
     employment: {
       incomeName: string, required
       description: string, required
       startDate: string, date format YYYY-MM-DD, required
     }
   ```
-
 
 Response Body
 
@@ -240,8 +241,8 @@ clientId: uuid;
 email: string;
 income: [ /* array of objects, each of them has the following structure */
   {
-    incomeSource: string, one of ["EMPLOYED", "SELF_EMPLOYED", "STUDENT", "RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER", "NO_INCOME"];
-    annualSalary: number;
+    incomeSource: string, one of ["EMPLOYED", "SELF_EMPLOYED", "STUDENT", "RETIRED", "UNEMPLOYED", "BENEFITS", "OTHER"];
+    annualSalary: integer;
     paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY", "OTHER"];
     additionalInfo: string, optional;
     employment: object, can take one of the schemas below;
@@ -251,8 +252,7 @@ income: [ /* array of objects, each of them has the following structure */
 
 The "employment" field from the above response can be one of the following:
 
-- 
-  ```
+- ```
   Employed {
     companyName: string;
     jobTitle: string;
@@ -262,8 +262,7 @@ The "employment" field from the above response can be one of the following:
   }
   ```
 
-- 
-  ```
+- ```
   SelfEmployed {
     incomeName: string;
     jobTitle: string;
@@ -271,8 +270,7 @@ The "employment" field from the above response can be one of the following:
   }
   ```
 
--
-  ```
+- ```
   Student {
     educationalInstitutionName: string;
     grantsAvailability: boolean;
@@ -280,8 +278,7 @@ The "employment" field from the above response can be one of the following:
   }
   ```
 
-- 
-  ```
+- ```
   Retired {
     incomeName: string;
     description: string;
@@ -289,8 +286,7 @@ The "employment" field from the above response can be one of the following:
   }
   ```
 
--
-  ```
+- ```
   Unemployed {
     incomeName: string;
     description: string;
@@ -298,8 +294,7 @@ The "employment" field from the above response can be one of the following:
   }
   ```
 
--
-  ```
+- ```
   Benefits {
     incomeName: string;
     description: string;
@@ -307,8 +302,7 @@ The "employment" field from the above response can be one of the following:
   }
   ```
 
--
-  ```
+- ```
   Other {
     incomeName: string;
     description: string;
@@ -329,11 +323,11 @@ email: string, required,
 data: {
   homeowner: boolean, required
   rentsDuringLastYear: boolean, required
-  rents: [ required if rentsDuringLastYear == true, minimum 1 item
+  rents: [ required if rentsDuringLastYear is true, minimum 1 item
     {
       name: string, required
-      paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"], required
-      rentPaymentAmount: number, required
+      paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY", "OTHER"], required
+      rentPaymentAmount: integer, required
       rentPaidTo: string, required
     }
   ]
@@ -351,13 +345,12 @@ rentData: {
   rents: [ /* optional field */
     {
       name: string;
-      paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY"];
-      rentPaymentAmount: number;
+      paymentFrequency: string, one of ["MONTHLY", "TWO_WEEKLY", "WEEKLY", "OTHER"];
+      rentPaymentAmount: integer;
       rentPaidTo: string;
     }
   ];
 ```
-
 
 ## Referencing Endpoints
 
@@ -494,6 +487,7 @@ clientId: your client reference
 ```
 
 Request body:
+
 ```
 email: string (required),
 firstName: string (optional),
@@ -513,6 +507,7 @@ If a referencing request is registered successfully you will receive the followi
 ```
 "requestId" - the identifier of the request,
 "success": true
+"canopyReferenceId"
 ```
 
 If there was an `authentication` error while handling a new request, then you will receive the following:
@@ -604,10 +599,10 @@ Request body:
 ```
 type: string (required) - scpecifies which type of updates will be sent from Canopy, one of ["PASSPORT_STATUS_UPDATES", "REQUEST_STATUS_UPDATES"];
 callbackUrl: string (required) - the URL of the webhook endpoint;
-additionalSettings: string[] (optional) - list of Rent Passport sections for which updates will be sent; 
-  - This field should only be added in case "PASSPORT_STATUS_UPDATES" webhook type is specified. 
+additionalSettings: string[] (optional) - list of Rent Passport sections for which updates will be sent;
+  - This field should only be added in case "PASSPORT_STATUS_UPDATES" webhook type is specified.
   - The following sections can be specified inside the array: ["INCOME", "RENT", "CREDIT_CHECK", "SAVINGS", "RENTAL_PREFERENCES", "EMPLOYEE_REFERENCE", "LANDLORD_REFERENCE"]
-  - There is no need to explicitly specify the names of all sections if you want to receive all updates. Just send an empty array - []. 
+  - There is no need to explicitly specify the names of all sections if you want to receive all updates. Just send an empty array - [].
 ```
 
 Successful response body:
@@ -636,7 +631,6 @@ If you subscribed to the `REQUEST_STATUS_UPDATES` type, the updates will be sent
 
 - `INVALID_APPLICATION_DETAILS` - client's request body with application details was invalid;
 
-
 Once `REQUEST_STATUS_UPDATES` event trigger, the Canopy should sent the notification to `callbackUrl` in the following format:
 
 ```
@@ -658,7 +652,6 @@ If you are subscribed to the `PASSPORT_STATUS_UPDATES` type, the updates will be
 - `LANDLORD REFERENCE` - optional, only if FULL SCREENING requested;
 
 - `EMPLOYER REFERENCE` - optional, only if FULL SCREENING requested;
-
 
 Once `PASSPORT_STATUS_UPDATES` event trigger, the Canopy should sent the notification to `callbackUrl` in the following format:
 
