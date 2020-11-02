@@ -31,17 +31,17 @@ You need to request an API token to make calls to the Canopy API. In order to do
 
    ```
    function generatePayload(clientId) {
-     const now = Math.floor(Date.now() / 1000); // sec
-       const expires = now + 60 * 60;
-       var payload = {
-           iss: 'canopy.rent',
-           scope: 'request.write_only document.read_only',
-           aud: `referencing-requests/client/${clientId}/token`,
-           exp: expires,
-           iat: now
-       };
-     return base64url.encode(JSON.stringify(payload))
-   }
+      const now = Math.floor(Date.now() / 1000); // sec
+        const expires = now + 60 * 60;
+        var payload = {
+            iss: 'canopy.rent',
+            scope: 'request.write_only document.read_only',
+            aud: `referencing-requests/client/${clientId}/token`,
+            exp: expires,
+            iat: now
+        };
+      return payload;
+    }
    ```
 
 2. You need to sign this with JWT (e.g. jsonwebtoken in Javascript) using the secretKey in the credentials you were sent
