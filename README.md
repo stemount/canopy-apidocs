@@ -840,6 +840,22 @@ content-type: application/pdf
 content-disposition: attachment; filename='9e6222ee-312b-2297-a03a-07700363a6b6_FULL.pdf'
 ```
 
+### Get Intermediate PDF Report
+
+Get Screening Results of the renter, even if Passport is not completed. When you receive notifications that some of the Renter Passports sections were updated, you can call and get a PDF Report with current state. For example it is useful when renter should provide FULL referencing, but you wish to see INSTANT screening results as soon as it is completed and not wait while full screening will be passed.
+
+```
+GET /referencing-requests/client/:clientId/rent-passport/:canopyReferenceId
+```
+
+Parameters:
+```
+clientId – your client reference,
+canopyReferenceId – the id of registered request on the Canopy side,
+
+Also, this endpoint may accept ?format=json query param to return RP in json format, in other cases returns pdf.
+```
+
 ## Webhooks Endpoints
 
 ### Register Webhook
