@@ -13,7 +13,7 @@ function generatePayload(config) {
         exp: expires,
         iat: now
     };
-    return base64url.encode(JSON.stringify(payload))
+    return payload;
 }
 
 // Generate hmac
