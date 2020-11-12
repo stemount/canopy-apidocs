@@ -905,7 +905,7 @@ If you subscribed to the `REQUEST_STATUS_UPDATES` type, the updates will be sent
 
 - `SENDING_COMPLETED_PASSPORT_FAILED` - sending the completed passport to client failed;
 
-- `PASSPORT_COMPLETED` - `user complete his passport and the document was sent;
+- `PASSPORT_COMPLETED` - user complete his passport and the document was sent;
 
 - `INVALID_APPLICATION_DETAILS` - client's request body with application details was invalid;
 
