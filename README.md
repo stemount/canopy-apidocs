@@ -640,8 +640,8 @@ Response body:
     "canopyBranchId": string — id of the Canopy branch,
     "clientBranchId": string — id of the client's branch,
     "branchName": string — the name of the Canopy branch,
-    "branchAddress": {
-      "id": string,
+    "branchAddress": { - branch address entity
+      "id": string, - id of the branch address
       "line1": string,
       "line2": string,
       "line3": string,
@@ -849,6 +849,7 @@ GET /referencing-requests/client/:clientId/rent-passport/:canopyReferenceId
 ```
 
 Parameters:
+
 ```
 clientId – your client reference,
 canopyReferenceId – the id of registered request on the Canopy side,
