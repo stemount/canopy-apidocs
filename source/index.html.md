@@ -577,6 +577,29 @@ This endpoint returns the list of client's branches mapped with Canopy branches.
 | --------- | --------------------- |
 | clientId  | Your client reference |
 
+### Response Structure
+
+| Parameter | Type   | Description                                               |
+| --------- | ------ | --------------------------------------------------------- |
+| success   | bool   | Request status                                            |
+| requestId | string | Request id                                                |
+| data      | object | Object that contains branches field with list of branches |
+
+Data object structure:
+
+| Parameter | Type  | Description      |
+| --------- | ----- | ---------------- |
+| branches  | array | List of branches |
+
+Single branch data structure:
+
+| Parameter      | Type   | Description                                                                                                             |
+| -------------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
+| canopyBranchId | string | id of the branch in the Canopy system                                                                                   |
+| clientBranchId | string | id of the client's branch                                                                                               |
+| branchName     | string | The name of the Canopy branch                                                                                           |
+| branchAddress  | object | Object that contains information about branch address. You can see example of the address structure in the code example |
+
 ## Link Branch
 
 ```javascript
