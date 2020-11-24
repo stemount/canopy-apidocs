@@ -565,7 +565,7 @@ axios({
 }
 ```
 
-This endpoint returns the list of client's branches mapped with Canopy branches.
+This endpoint returns the list of canopy branches associated with `clientId`.
 
 ### HTTP Request
 
@@ -593,12 +593,12 @@ Data object structure:
 
 Single branch data structure:
 
-| Parameter      | Type   | Description                                                                                                             |
-| -------------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
-| canopyBranchId | string | id of the branch in the Canopy system                                                                                   |
-| clientBranchId | string | id of the client's branch                                                                                               |
-| branchName     | string | The name of the Canopy branch                                                                                           |
-| branchAddress  | object | Object that contains information about branch address. You can see example of the address structure in the code example |
+| Parameter      | Type           | Description                                                                                                                                          |
+| -------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| canopyBranchId | string         | id of the branch in the Canopy system                                                                                                                |
+| clientBranchId | string or null | id of the client's branch that is linked with this canopy branch, if equals null than this canopy branch is not linked with any client branch branch |
+| branchName     | string         | The name of the Canopy branch                                                                                                                        |
+| branchAddress  | object         | Object that contains information about branch address. You can see example of the address structure in the code example                              |
 
 ## Link Branch
 

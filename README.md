@@ -618,7 +618,7 @@ rentData: {
 
 ### Get the List of Branches
 
-The endpoint below returns the list of client's branches mapped with Canopy branches:
+The endpoint below returns the list of canopy branches associated with `clientId`:
 
 ```
 GET /referencing-requests/client/:clientId/branches-list
@@ -638,7 +638,7 @@ Response body:
 "branches": [
   {
     "canopyBranchId": string — id of the Canopy branch,
-    "clientBranchId": string — id of the client's branch,
+    "clientBranchId": string or null — id of the client's branch that is linked with this canopy branch, if equals null than this canopy branch is not linked with any client branch
     "branchName": string — the name of the Canopy branch,
     "branchAddress": { - branch address entity
       "id": string, - id of the branch address
