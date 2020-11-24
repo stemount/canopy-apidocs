@@ -616,9 +616,9 @@ rentData: {
 
 ## Referencing Endpoints
 
-### Get the List of Branches
+### Get the List of Branches and Connections
 
-The endpoint below returns the list of canopy branches associated with `clientId`:
+The endpoint below returns the list of canopy branches associated with `clientId` and connections with client branches. Canopy branch might be linked with some client branch, in this case `clientBranchId` value will contain id of the client branch. If canopy branch linked with multiple client branches, then same canopy branch will appear in the list multiple times with different `clientBranchId`. If canopy branch is not linked to any client branch, then `clientBranchId` will be equal to `null`.
 
 ```
 GET /referencing-requests/client/:clientId/branches-list
