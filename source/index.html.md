@@ -542,9 +542,28 @@ axios({
         }
       },
       {
+        "canopyBranchId": "592954da-4ea7-426b-ace3-f61dbc169ea4",
+        "clientBranchId": "0830f800-b5d2-4e16-aede-411cb5f3c58b",
+        "branchName": "Branch 2",
+        "branchAddress": {
+          "id": "af380cca-e2a6-4cc2-8abc-99889f4e787f",
+          "line1": "Apartment 9",
+          "line2": "113 Street name",
+          "line3": null,
+          "street": "Street name",
+          "town": "London",
+          "postCode": "M1 1AE",
+          "countryCode": "GB",
+          "flat": "9",
+          "district": null,
+          "houseNumber": "113",
+          "houseName": null
+        }
+      },
+      {
         "canopyBranchId": "818e8ad7-97aa-460d-a007-6b65830ace5b",
         "clientBranchId": null,
-        "branchName": "Branch 2",
+        "branchName": "Branch 3",
         "branchAddress": {
           "id": "af380cca-e2a6-4cc2-8abc-99889f4e787f",
           "line1": "Apartment 9",
@@ -650,7 +669,7 @@ axios({
 }
 ```
 
-This endpoint links existing Canopy branch with client's branch.
+Thish endpoint links existing Canopy branch with client's branch. This operation is required for [referencing request](https://insurestreetltd.github.io/canopy-apidocs/#request-referencing). `clientBranchId` should be unique, so there can be only one connection with specific client branch. `canopyBranchId` can be used in multiple connections, so there can be multiple connections between single canopy branch and multiple client's branches.
 
 ### HTTP Request
 
@@ -661,6 +680,13 @@ This endpoint links existing Canopy branch with client's branch.
 | Parameter | Description           |
 | --------- | --------------------- |
 | clientId  | Your client reference |
+
+### Body Parameters
+
+| Parameter      | Type   | Description                                                                                                                                                                                    |
+| -------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| canopyBranchId | string | id of the Canopy branch, you can get list of possible branches using [GET /bracnhes-list endpoint](https://insurestreetltd.github.io/canopy-apidocs/#get-the-list-of-branches-and-connections) |
+| clientBranchId | string | id of the branch in the client's system, it can be any string of uuid format and should be unique                                                                                              |
 
 ## Delete Branch Mapping
 
@@ -693,7 +719,7 @@ axios({
 }
 ```
 
-This endpoint deletes existing branch mapping between Canopy and client.
+This endpoint deletes existing branch mapping between Canopy branch and client branch.
 
 ### HTTP Request
 
@@ -747,6 +773,8 @@ axios({
 }
 ```
 
+This endpoint creates new referencing request.
+
 ### HTTP Request
 
 `POST /referencing-requests/client/:clientId/request`
@@ -759,19 +787,19 @@ axios({
 
 ### Body Parameters
 
-| Parameter         | Type   | Required | Description                                                  |
-| ----------------- | ------ | -------- | ------------------------------------------------------------ |
-| email             | string | true     |                                                              |
-| firstName         | string | false    |                                                              |
-| middleName        | string | false    |                                                              |
-| lastName          | string | false    |                                                              |
-| callbackUrl       | string | true     | URL to which Canopy will send PDF Report                     |
-| requestType       | string | true     | One of ["RENTER_SCREENING", "GUARANTOR_SCREENING"]           |
-| itemType          | string | true     | One of ["INSTANT", "FULL"]                                   |
-| title             | string | false    | Title that is used before a surname or full name             |
-| phone             | string | false    |                                                              |
-| branchId          | string | false    | An identifier of the client's branch which requests the user |
-| clientReferenceId | string | false    | A unique identifier on the client's side                     |
+| Parameter         | Type   | Required | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------------- | ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| email             | string | true     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| firstName         | string | false    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| middleName        | string | false    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| lastName          | string | false    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| callbackUrl       | string | true     | URL to which Canopy will send PDF Report                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| requestType       | string | true     | One of ["RENTER_SCREENING", "GUARANTOR_SCREENING"]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| itemType          | string | true     | One of ["INSTANT", "FULL"]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| title             | string | false    | Title that is used before a surname or full name                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| phone             | string | false    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| branchId          | string | false    | clientBranchId that is connected to any canopy branch, you can get list of created connections using [GET /bracnhes-list endpoint](https://insurestreetltd.github.io/canopy-apidocs/#get-the-list-of-branches-and-connections), if there's no connection created with such branchId then this API call will return 404 error, new connection can be created using [POST /link-branch endpoint](https://insurestreetltd.github.io/canopy-apidocs/#link-branch), if no branchId is passed than default branch will be used for the referencing request |
+| clientReferenceId | string | false    | A unique identifier on the client's side                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 ## Rent Passport Retrieval
 
