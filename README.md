@@ -660,7 +660,7 @@ Response body:
 
 ### Link Branch
 
-The endpoint below links existing Canopy branch with client's branch:
+The endpoint below links existing Canopy branch with client's branch. This operation is required for [referencing request](https://github.com/insurestreetltd/canopy-apidocs/tree/master#request-referencing). `clientBranchId` should be unique, so there can be only one connection with specific client branch. `canopyBranchId` can be used in multiple connections, so there can be multiple connections between single canopy branch and multiple client's branches.
 
 ```
 POST /referencing-requests/client/:clientId/link-branch
@@ -675,17 +675,17 @@ clientId: your client reference
 Request body:
 
 ```
-canopyBranchId: string
-clientBranchId: string
+canopyBranchId: string - id of the Canopy branch, you can get list of possible branches using GET /bracnhes-list endpoint
+clientBranchId: string - id of the branch in the client's system, it can be any string of uuid format and should be unique
 ```
 
 Successful response body:
 
 ```
 "canopyBranchId": string — id of the Canopy branch
-"clientBranchId": string — id of the client's branch,
+"clientBranchId": string — id of the branch in the client's system
 "branchName": string — name of the Canopy branch
-"branchAddress": {
+"branchAddress": { - branch address entity
   "id": string,
   "line1": string,
   "line2": string,
@@ -717,7 +717,7 @@ Unsuccessful response body:
 
 ### Delete Branch Mapping
 
-The endpoints below deletes existing branch mapping between Canopy and client:
+The endpoints below deletes existing branch mapping between Canopy branch and client branch:
 
 ```
 DELETE /referencing-requests/client/:clientId/branch-mapping/:clientBranchId
@@ -737,6 +737,8 @@ clientBranchId: string
 ```
 
 ### Request Referencing
+
+This endpoint creates new referencing request.
 
 ```
 POST /referencing-requests/client/:clientId/request
@@ -760,7 +762,7 @@ requestType: enum (required) - one of [RENTER_SCREENING, GUARANTOR_SCREENING],
 itemType: enum (required) - one of [INSTANT, FULL],
 title: string (optional) - it's a title used before a surname or full name,
 phone: string (optional),
-branchId: string (optional) - this is an identifier of the client's branch which requests the user,
+branchId: string (optional) - clientBranchId that is connected to any canopy branch, you can get list of created connections using GET /bracnhes-list endpoint, if there's no connection created with such branchId then this API call will return 404 error, new connection can be created using POST /link-branch endpoint, if no branchId is passed than default branch will be used for the referencing request
 clientReferenceId: string (optional) - this is unique identifier on the client's side
 ```
 
