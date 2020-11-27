@@ -616,6 +616,23 @@ rentData: {
 
 ## Referencing Endpoints
 
+Inside the Canopy system, there are 3 main entities: company, branch and agent. All communications between the agents and renters happen on the branch level, not on the company level. It means that each company must have at least one branch (let’s call it *default*), so all existing or new agents should belong to the particular branch(es) in order to work with the potential or actual renters. For example, if the agent belongs to **Branch 1** and this agent sends the invite to the potential renter, actually the invite is sent from **Branch 1**, not directly from the agent or **Company**.
+
+<p align="center"><img src="/company-branch.svg" /></p>
+
+Therefore, in order to work with us, we create a Company and the default Branch for you at the very beginning. On the basic level, it’s enough for the correct workflow. There are the following possible scenarios:
+- **You work on the Company level and don’t have such concept as Branch**: 
+</br> In that case, there is no need to Link your branches with Canopy branches. For all the internal interactions, we will use the default branch (**Branch 1**) created for you.
+- **Beside the Company, you have one Branch as well so you work on the Branch level as we do**:
+</br> In that case, you can link your single branch with our default branch, but it’s also an optional step. Anyway, we will use the default **Branch 1** for our internal communication with the renters.
+- **Beside the Company, you have several branches so you work on the Branch level as we do:**
+</br>This is basically the same approach which is used inside the Canopy system. In order to request a reference for the particular renter, you can either:
+  - Use the default branch, which is already created in the Canopy
+  - Preliminary create an additional branches (Branch 2, Branch 3, …, Branch N) in Canopy system and then link/map them with your own branches. 
+
+  After that, at the moment of requesting a reference from Canopy for the user, you can specify the branch to which this reference should be attached. But again, this step of branch mapping is an optional step. If you don’t want to link anything, just skip the Branch Linking step so that we will always use the default branch for the internal interactions with renter.
+
+
 ### Get the List of Branches and Connections
 
 The endpoint below returns the list of canopy branches associated with `clientId` and connections with client branches. Canopy branch might be linked with some client branch, in this case `clientBranchId` value will contain id of the client branch. If canopy branch linked with multiple client branches, then same canopy branch will appear in the list multiple times with different `clientBranchId`. If canopy branch is not linked to any client branch, then `clientBranchId` will be equal to `null`.
