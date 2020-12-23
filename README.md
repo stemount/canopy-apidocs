@@ -1,5 +1,7 @@
 ![Logo](/canopylogo.png "Logo")
 
+# UML
+
 # API Documentation
 
 ## Introduction
@@ -677,23 +679,35 @@ Response body:
 
 ### Link Branch
 
+<<<<<<< Updated upstream
 The endpoint below links existing Canopy branch with client's branch. This operation is required for [referencing request](https://github.com/insurestreetltd/canopy-apidocs/tree/master#request-referencing). `clientBranchId` should be unique, so there can be only one connection with specific client branch. `canopyBranchId` can be used in multiple connections, so there can be multiple connections between single canopy branch and multiple client's branches.
+=======
+- **It is essential to create a link branch UUIDv4 as it is required in the `bridge-id`.**
+>>>>>>> Stashed changes
+
+**Notes:**
+- `clientBranchId` has validation which requires a UUIDv4.
+-  @matt did mention must be a linked branch as ... (tbc with Kirill)
+
+To add/change a Linked Branch on an existing branch, this is useful.
 
 ```
-POST /referencing-requests/client/:clientId/link-branch
-```
-
-Parameters:
-
-```
-clientId: your client reference
+POST /referencing-requests/client/{{ clientId }}/link-branch
 ```
 
 Request body:
 
 ```
+<<<<<<< Updated upstream
 canopyBranchId: string - id of the Canopy branch, you can get list of possible branches using GET /bracnhes-list endpoint
 clientBranchId: string - id of the branch in the client's system, it can be any string of uuid format and should be unique
+=======
+
+{
+  "canopyBranchId": UUID of Canopy Branch you want to change
+  "clientBranchId": UUID of Canopy Branch ID to link to.
+}
+>>>>>>> Stashed changes
 ```
 
 Successful response body:
@@ -735,6 +749,8 @@ Unsuccessful response body:
 ### Delete Branch Mapping
 
 The endpoints below deletes existing branch mapping between Canopy branch and client branch:
+
+Specify clientBranchId
 
 ```
 DELETE /referencing-requests/client/:clientId/branch-mapping/:clientBranchId
@@ -779,8 +795,13 @@ requestType: enum (required) - one of [RENTER_SCREENING, GUARANTOR_SCREENING],
 itemType: enum (required) - one of [INSTANT, FULL],
 title: string (optional) - it's a title used before a surname or full name,
 phone: string (optional),
+<<<<<<< Updated upstream
 branchId: string (optional) - clientBranchId that is connected to any canopy branch, you can get list of created connections using GET /bracnhes-list endpoint, if there's no connection created with such branchId then this API call will return 404 error, new connection can be created using POST /link-branch endpoint, if no branchId is passed than default branch will be used for the referencing request
 clientReferenceId: string (optional) - this is unique identifier on the client's side
+=======
+branchId: string - this is an identifier of the client's branch which requests the user,
+clientReferenceId: string - this is unique identifier on the client's side
+>>>>>>> Stashed changes
 ```
 
 If a referencing request is registered successfully you will receive the following response:
